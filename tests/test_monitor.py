@@ -11,4 +11,4 @@ class TestMonitor(unittest.TestCase):
 
     def test_class(self):
         """Tests class."""
-        self.assertTrue(isinstance(self.monitor.get_open_issues("Qiskit", "qiskit-terra"), list))
+        self.assertTrue(isinstance(self.monitor, Monitor))
