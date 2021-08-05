@@ -12,7 +12,7 @@ from .entities import IssueMeta, IssueCommentMeta
 from .utils import UrlsHelper, GitHubUrlsHelper
 
 
-# pylint: disable=no-self-use,too-few-public-methods
+# pylint: disable=too-few-public-methods
 class Monitor:
     """Monitor class."""
     def __init__(self, token: Optional[str] = None, urls: Optional[UrlsHelper] = None):
@@ -75,6 +75,7 @@ class Monitor:
                                          number=number,
                                          state=issue.get("state"),
                                          assignee=assignee,
+                                         author_association=issue.get("author_association"),
                                          comments=comments,
                                          created_at=datetime.fromisoformat(
                                              issue.get("created_at")[:-1]),
