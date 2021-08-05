@@ -57,11 +57,12 @@ class IssueMeta:
                  number: str,
                  state: str,
                  assignee: str,
+                 author_association: str,
                  comments: List[IssueCommentMeta],
                  created_at: datetime,
                  updated_at: datetime,
                  user: str,
-                 pull_request: str,
+                 pull_request: Optional[str] = None,
                  labels: Optional[List[str]] = None):
         """Issue metaclass to store only necessary for reporting information.
 
@@ -70,6 +71,7 @@ class IssueMeta:
             number: issue number
             state: issue state
             assignee: issue assignee
+            author_association: [MEMBER, COLLABORATOR, CONTRIBUTOR, NONE]
             comments: comments
             created_at: creation date
             updated_at: update date
@@ -81,6 +83,7 @@ class IssueMeta:
         self.number = number
         self.state = state
         self.assignee = assignee
+        self.author_association = author_association
         self.comments = comments
         self.created_at = created_at
         self.updated_at = updated_at
@@ -112,7 +115,17 @@ class IssueMeta:
                                   comment.author_association in ["COLLABORATOR", "MEMBER"]]
 
         return (datetime.now() - latest_member_comments[-1].created_at).days \
-            if len( latest_member_comments) > 0 else None
+            if len(latest_member_comments) > 0 else 0
+
+    @property
+    def last_commented_by(self) -> str:
+        """Return username of last commented user."""
+        if len(self.comments) > 0:
+            return sorted(self.comments, key=lambda c: -c.created_at.timestamp())[0].user
+        return ""
+
+    def __eq__(self, other: 'IssueMeta'):
+        return self.title == self.title and self.user == self.user
 
     def __repr__(self):
         return "IssueMeta({title}, author={author})".format(title=self.title,
@@ -120,3 +133,30 @@ class IssueMeta:
 
     def __str__(self):
         return repr(self)
+
+
+class RepoMeta:
+    """Github repository meta class."""
+
+    def __init__(self,
+                 account: str,
+                 name: str,
+                 issues: List[IssueMeta]):
+        """Github repo.
+
+        Args:
+            account: GitHub account
+            name: name of repo
+            issues: issues
+        """
+        self.account = account
+        self.name = name
+        self.issues = issues
+
+    def __str__(self):
+        return "Repo({account}/{name} | {n_issues} issues)".format(account=self.account,
+                                                                   name=self.name,
+                                                                   n_issues=len(self.issues))
+
+    def __repr__(self):
+        return "Repo({account}/{name})".format(account=self.account, name=self.name)
