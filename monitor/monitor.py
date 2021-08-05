@@ -8,23 +8,25 @@ from typing import Optional, List
 
 import requests
 
-from .entities import IssueMeta, IssueCommentMeta, GitHubAPIUrls
+from .entities import IssueMeta, IssueCommentMeta
+from .utils import UrlsHelper, GitHubUrlsHelper
 
 
 # pylint: disable=no-self-use,too-few-public-methods
 class Monitor:
     """Monitor class."""
-    def __init__(self, token: Optional[str] = None):
+    def __init__(self, token: Optional[str] = None, urls: Optional[UrlsHelper] = None):
         """Monitor class."""
         self.token = token
         self.headers = {"Authorization": "token {}".format(self.token)} if self.token else {}
+        self.urls = urls if urls else GitHubUrlsHelper()
 
     def _get_comments(self, account: str, repo: str, issue_number: str) -> List[IssueCommentMeta]:
         """Get issue comments."""
         comments = []
-        issue_comments_response = requests.get(GitHubAPIUrls.COMMENTS.format(number=issue_number,
-                                                                             account=account,
-                                                                             repo=repo),
+        issue_comments_response = requests.get(self.urls.get_comments_url(number=issue_number,
+                                                                          account=account,
+                                                                          repo=repo),
                                                headers=self.headers)
         if issue_comments_response.ok:
             comments_data = json.loads(issue_comments_response.text)
@@ -42,18 +44,20 @@ class Monitor:
 
         return comments
 
-    def get_open_issues(self, account: str, repo: str) -> List[IssueMeta]:
+    def get_open_issues(self, account: str,
+                        repo: str,
+                        max_pages: Optional[int] = None) -> List[IssueMeta]:
         """Gets open issues from GitHub api."""
         page = 1
-        max_counter = 100
+        max_counter = max_pages if max_pages is not None else 100
 
         repo_issues = []
         while max_counter > 0:
             max_counter -= 1
 
-            issues_response = requests.get(GitHubAPIUrls.ISSUES.format(account=account,
-                                                                       repo=repo,
-                                                                       page=page),
+            issues_response = requests.get(self.urls.get_issues_url(account=account,
+                                                                    repo=repo,
+                                                                    page=page),
                                            headers=self.headers)
             if issues_response.ok:
                 fetched_repo_issues = json.loads(issues_response.text)
