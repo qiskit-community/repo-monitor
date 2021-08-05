@@ -43,7 +43,7 @@ class IssueCommentMeta:
         self.updated_at = updated_at
 
     def __repr__(self):
-        return "Comment(author={author} [{time}])".format(author=self.user, time=self.created_at)
+        return "Comment(by {author} | {time})".format(author=self.user, time=self.created_at)
 
     def __str__(self):
         return repr(self)
