@@ -4,7 +4,7 @@ from typing import List, Dict, Tuple
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
-from monitor.entities import RepoMeta, IssueMeta
+from monitor.entities import RepoMeta, IssueMeta, GitHubAuthorAssociations
 
 
 class RepoReport:
@@ -45,11 +45,11 @@ class RepoReport:
 
     @property
     def top_authors(self) -> List[Tuple[str, int]]:
-        """Returns top authors of issues."""
+        """Returns top 5 authors of issues."""
         res = []
         for author, count in dict(Counter(issue.user for issue in self.repo.issues)).items():
             res.append((author, count))
-        return res[:3]
+        return sorted(res, key=lambda pair: -pair[1])[:5]
 
     @property
     def top_author_associations(self) -> Dict[str, int]:
@@ -64,10 +64,18 @@ class RepoReport:
                       key=lambda i: -i.days_since_last_update)
 
     @property
+    def issues_with_community_association(self) -> List[IssueMeta]:
+        """Issues that was associated with community contributor
+        a.k.a last commented by community or created by community.
+        """
+        issues = [i for i in self.repo.issues
+                  if i.is_authored_by_or_last_commented_by_community]
+        return sorted(issues, key=lambda i: -i.days_since_last_update)
+
+    @property
     def days_since_last_comment_by_member(self) -> list[IssueMeta]:
         """Issues sorted by last update by member."""
-        return sorted([i for i in self.repo.issues
-                       if i.days_since_last_member_comment],
+        return sorted([i for i in self.repo.issues if i.days_since_last_member_comment],
                       key=lambda i: -i.days_since_last_member_comment)
 
     @property

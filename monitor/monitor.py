@@ -8,13 +8,15 @@ from typing import Optional, List
 
 import requests
 
-from .entities import IssueMeta, IssueCommentMeta
-from .utils import UrlsHelper, GitHubUrlsHelper
+from monitor.entities import IssueMeta, IssueCommentMeta, RepoMeta
+from monitor.report import FullReport
+from monitor.utils import UrlsHelper, GitHubUrlsHelper
 
 
 # pylint: disable=too-few-public-methods
 class Monitor:
     """Monitor class."""
+
     def __init__(self, token: Optional[str] = None, urls: Optional[UrlsHelper] = None):
         """Monitor class."""
         self.token = token
@@ -68,25 +70,39 @@ class Monitor:
                     assignee = issue.get("assignee")
                     if assignee is not None:
                         assignee = assignee.get("login")
-                        number = issue.get("number")
-                        comments = self._get_comments(account, repo, number)
+                    number = issue.get("number")
+                    comments = self._get_comments(account, repo, number)
 
-                        meta = IssueMeta(title=issue.get("title"),
-                                         number=number,
-                                         state=issue.get("state"),
-                                         assignee=assignee,
-                                         author_association=issue.get("author_association"),
-                                         comments=comments,
-                                         created_at=datetime.fromisoformat(
-                                             issue.get("created_at")[:-1]),
-                                         updated_at=datetime.fromisoformat(
-                                             issue.get("updated_at")[:-1]),
-                                         user=issue.get("user", {}).get("login"),
-                                         pull_request=issue.get("pull_request", {}).get("url"))
-                        repo_issues.append(meta)
+                    meta = IssueMeta(title=issue.get("title"),
+                                     number=number,
+                                     state=issue.get("state"),
+                                     assignee=assignee,
+                                     author_association=issue.get("author_association"),
+                                     comments=comments,
+                                     created_at=datetime.fromisoformat(
+                                         issue.get("created_at")[:-1]),
+                                     updated_at=datetime.fromisoformat(
+                                         issue.get("updated_at")[:-1]),
+                                     user=issue.get("user", {}).get("login"),
+                                     pull_request=issue.get("pull_request", {}).get("url"))
+                    repo_issues.append(meta)
                 page += 1
             else:
                 break
 
         # TODO: warning if empty results  # pylint: disable=fixme
         return repo_issues
+
+    def render_report(self, repos_urls: List[str]) -> str:
+        """Renders report."""
+        repos = []
+        for url in repos_urls:
+            parts = url.split("/")
+            account, name = parts[-2], parts[-1]
+            repos.append(RepoMeta(account=account,
+                                  name=name,
+                                  issues=self.get_open_issues(account=account,
+                                                              repo=name)))
+
+        report = FullReport(repos)
+        return report.render_report()

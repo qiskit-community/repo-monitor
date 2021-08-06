@@ -1,21 +1,21 @@
 """Issue meta class."""
 from datetime import datetime
-from typing import List, Optional
+from enum import Enum
+from typing import List, Optional, Union
 
 
-class GitHubAPIUrls:
-    """Github API urls."""
-    ISSUES: str = "https://api.github.com/repos/{account}/{repo}/" \
-                  "issues?page={page}&state=open&per_page=100"
-    COMMENTS: str = "https://api.github.com/repos/{account}/{repo}/" \
-                    "issues/{number}/comments?per_page=100"
+class GitHubAuthorAssociations:
+    """Github author associations enum."""
+    MEMBER: str = "MEMBER"
+    CONTRIBUTOR: str = "CONTRIBUTOR"
+    FIRST_TIME_CONTRIBUTOR: str = "FIRST_TIME_CONTRIBUTOR"
+    COLLABORATOR: str = "COLLABORATOR"
+    NONE: str = "NONE"
 
-    def __str__(self):
-        return "GithubApiUrls{}".format(",".join([GitHubAPIUrls.ISSUES,
-                                                  GitHubAPIUrls.COMMENTS]))
-
-    def __repr__(self):
-        return "GithubApiUrls"
+    @classmethod
+    def members_associations(cls) -> List[str]:
+        """Returns list of associations for members."""
+        return [cls.MEMBER, cls.COLLABORATOR]
 
 
 class IssueCommentMeta:
@@ -25,8 +25,8 @@ class IssueCommentMeta:
                  user: str,
                  author_association: str,
                  user_type: str,
-                 created_at: datetime,
-                 updated_at: datetime):
+                 created_at: Optional[datetime] = None,
+                 updated_at: Optional[datetime] = None):
         """Github issue comment meta.
 
         Args:
@@ -39,8 +39,8 @@ class IssueCommentMeta:
         self.user = user
         self.author_association = author_association
         self.user_type = user_type
-        self.created_at = created_at
-        self.updated_at = updated_at
+        self.created_at = created_at if created_at is not None else datetime.now()
+        self.updated_at = updated_at if updated_at is not None else datetime.now()
 
     def __repr__(self):
         return "Comment(by {author} | {time})".format(author=self.user, time=self.created_at)
@@ -54,14 +54,14 @@ class IssueMeta:
 
     def __init__(self,
                  title: str,
-                 number: str,
+                 number: Union[str, int],
                  state: str,
                  assignee: str,
                  author_association: str,
                  comments: List[IssueCommentMeta],
-                 created_at: datetime,
-                 updated_at: datetime,
                  user: str,
+                 created_at: Optional[datetime] = None,
+                 updated_at: Optional[datetime] = None,
                  pull_request: Optional[str] = None,
                  labels: Optional[List[str]] = None):
         """Issue metaclass to store only necessary for reporting information.
@@ -85,8 +85,8 @@ class IssueMeta:
         self.assignee = assignee
         self.author_association = author_association
         self.comments = comments
-        self.created_at = created_at
-        self.updated_at = updated_at
+        self.created_at = created_at if created_at is not None else datetime.now()
+        self.updated_at = updated_at if updated_at is not None else datetime.now()
         self.user = user
         self.pull_request = pull_request
         self.labels = labels if labels else []
@@ -112,10 +112,26 @@ class IssueMeta:
     def days_since_last_member_comment(self) -> int:
         """Number of days since last member comment."""
         latest_member_comments = [comment for comment in self.comments if
-                                  comment.author_association in ["COLLABORATOR", "MEMBER"]]
+                                  comment.author_association
+                                  in GitHubAuthorAssociations.members_associations()]
 
         return (datetime.now() - latest_member_comments[-1].created_at).days \
-            if len(latest_member_comments) > 0 else 0
+            if len(latest_member_comments) > 0 else None
+
+    @property
+    def is_authored_by_or_last_commented_by_community(self):
+        """Is issue authored by community or last comment was from community?"""
+        last_commented_by_community = False
+        if len(self.comments) > 0:
+            last_comment = sorted(self.comments, key=lambda c: -c.created_at.timestamp())[0]
+            last_commented_by_community = \
+                last_comment.author_association not in \
+                GitHubAuthorAssociations.members_associations()
+
+        created_by_community = \
+            self.author_association not in \
+            GitHubAuthorAssociations.members_associations()
+        return created_by_community or last_commented_by_community
 
     @property
     def last_commented_by(self) -> str:
@@ -123,6 +139,13 @@ class IssueMeta:
         if len(self.comments) > 0:
             return sorted(self.comments, key=lambda c: -c.created_at.timestamp())[0].user
         return ""
+
+    @property
+    def last_commenter_type(self):
+        """Last commenter type."""
+        if len(self.comments) > 0:
+            return sorted(self.comments, key=lambda c: -c.created_at.timestamp())[0].author_association
+        return GitHubAuthorAssociations.NONE
 
     def __eq__(self, other: 'IssueMeta'):
         return self.title == self.title and self.user == self.user
