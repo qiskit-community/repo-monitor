@@ -1,4 +1,4 @@
-name: Tests
+name: Issues report generation
 
 on:
   push:
