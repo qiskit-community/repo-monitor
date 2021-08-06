@@ -1,5 +1,6 @@
 """Report class."""
 from collections import Counter
+from datetime import datetime
 from typing import List, Dict, Tuple
 
 from jinja2 import Environment, PackageLoader, select_autoescape
@@ -112,4 +113,5 @@ class FullReport:
             repo_reports = RepoReport(repo)
             repos.append((repo, repo_reports.render_report()))
 
-        return self.template.render(repos=repos)
+        return self.template.render(repos=repos,
+                                    date=datetime.now().strftime("%m-%d-%Y"))
