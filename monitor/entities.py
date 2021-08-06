@@ -1,6 +1,5 @@
 """Issue meta class."""
 from datetime import datetime
-from enum import Enum
 from typing import List, Optional, Union
 
 
@@ -16,6 +15,15 @@ class GitHubAuthorAssociations:
     def members_associations(cls) -> List[str]:
         """Returns list of associations for members."""
         return [cls.MEMBER, cls.COLLABORATOR]
+
+    @classmethod
+    def all(cls) -> List[str]:
+        """Returns all available associations."""
+        return [cls.MEMBER,
+                cls.COLLABORATOR,
+                cls.CONTRIBUTOR,
+                cls.FIRST_TIME_CONTRIBUTOR,
+                cls.NONE]
 
 
 class IssueCommentMeta:
@@ -144,7 +152,8 @@ class IssueMeta:
     def last_commenter_type(self):
         """Last commenter type."""
         if len(self.comments) > 0:
-            return sorted(self.comments, key=lambda c: -c.created_at.timestamp())[0].author_association
+            return sorted(self.comments,
+                          key=lambda c: -c.created_at.timestamp())[0].author_association
         return GitHubAuthorAssociations.NONE
 
     def __eq__(self, other: 'IssueMeta'):

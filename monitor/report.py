@@ -4,7 +4,7 @@ from typing import List, Dict, Tuple
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
-from monitor.entities import RepoMeta, IssueMeta, GitHubAuthorAssociations
+from monitor.entities import RepoMeta, IssueMeta
 
 
 class RepoReport:

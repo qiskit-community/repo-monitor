@@ -1,12 +1,14 @@
 """Tests entities."""
 import unittest
 
-from monitor.entities import IssueMeta, IssueCommentMeta, RepoMeta, GitHubAuthorAssociations
+from monitor.entities import IssueMeta, IssueCommentMeta, GitHubAuthorAssociations
 
 
 class TestEntities(unittest.TestCase):
     """Tests entities."""
+
     def test_issue(self):
+        """Tests meta issue class."""
         issue = IssueMeta(title="Awesome issue",
                           number=42,
                           state="open",

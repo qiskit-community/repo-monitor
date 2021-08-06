@@ -76,7 +76,7 @@ class TestReport(unittest.TestCase):
         self.assertEqual(self.report.n_issues_by_members, 10)
         self.assertEqual(self.report.n_open_issues, 10)
         self.assertEqual(self.report.n_issues_by_users, 0)
-        self.assertEqual(len(self.report.top_authors), 3)
+        self.assertEqual(len(self.report.top_authors), 5)
         self.assertEqual(self.report.top_author_associations, {"MEMBER": 10})
 
     def test_last_activity_by_comminity(self):

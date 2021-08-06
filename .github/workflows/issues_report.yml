@@ -1,0 +1,30 @@
+name: Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo:
+        description: 'Full url to repository.'
+        required: true
+        default: https://github.com/Qiskit/qiskit-finance
+
+jobs:
+  generate_issue_report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+      - name: Echo
+        run: |
+          echo "Repo: ${{ github.event.inputs.repo }}!"
+          echo "- in ${{ github.event.inputs.repo }}!"
+      - name: Render report
+        run: python manager.py render_report '["${{ github.event.inputs.repo }}"]'

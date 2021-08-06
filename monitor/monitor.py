@@ -93,7 +93,7 @@ class Monitor:
         # TODO: warning if empty results  # pylint: disable=fixme
         return repo_issues
 
-    def render_report(self, repos_urls: List[str]) -> str:
+    def render_report(self, repos_urls: [List[str]]) -> str:
         """Renders report."""
         repos = []
         for url in repos_urls:
