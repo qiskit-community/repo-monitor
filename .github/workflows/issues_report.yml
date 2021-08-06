@@ -28,4 +28,4 @@ jobs:
           echo "Repo: ${{ github.event.inputs.repo }}!"
           echo "- in ${{ github.event.inputs.repo }}!"
       - name: Render report
-        run: python manager.py render_report '["${{ github.event.inputs.repo }}"]'
+        run: python manager.py render_report '["https://github.com/Qiskit/qiskit-finance"]'

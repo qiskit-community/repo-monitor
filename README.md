@@ -1,3 +1,4 @@
+[![Tests](https://github.com/qiskit-community/repo-monitor/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/qiskit-community/repo-monitor/actions/workflows/tests.yml)
 [![Contributors][contributors-shield]][contributors-url]
 [![Releases][releases-shield]][releases-url]
 [![Stargazers][stars-shield]][stars-url]
