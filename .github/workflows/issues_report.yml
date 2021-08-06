@@ -6,7 +6,7 @@ on:
     inputs:
       repo:
         description: 'Full url to repository.'
-        required: true
+        required: false
         default: https://github.com/Qiskit/qiskit-finance
 
 jobs:
