@@ -23,10 +23,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
-      - name: Echo
-        run: |
-          echo "Repo: ${{ github.event.inputs.repo }}!"
-          echo "- in ${{ github.event.inputs.repo }}!"
       - name: Generate report
         run: |
           mkdir reports
