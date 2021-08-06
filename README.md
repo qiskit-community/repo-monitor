@@ -26,13 +26,6 @@
     <li>
       <a href="#about-the-project">About The Project</a>
     </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#license">License</a></li>
@@ -47,41 +40,15 @@
 Repository for automation of Qiskit issues and prs monitoring.
 
 
-
-
-
-<!-- GETTING STARTED -->
-## Getting Started
-
-Explain how a user should set up their system to run the software as if it is their first time using it. Guide them through installation of the dependencies and asset source. 
-
-### Prerequisites
-
-* Install the Python dependencies
-  ```sh
-  pip install requirements.txt
-  ```
-
-### Installation
-
-1. Clone and enter the repository
-   ```
-   git clone https://github.ibm.com/IBM-Q-Software/quantum-assets-template.git
-   cd quantum-asset-template
-   ```
-3. Test your environment
-   ```
-   tox test
-   ```
-4. Install the module
-   ```
-   pip install .
-   ```
-
-
-
 <!-- USAGE EXAMPLES -->
 ## Usage
+
+This is CLI application to generate issues report from specified repositories.
+
+```shell
+mkdir reports
+python manager.py --token="<YOUR_GITHUB_TOKEN>" generate_reports_to_folder '["https://github.com/Qiskit/qiskit-finance"]'
+```
 
 
 <!-- ROADMAP -->
