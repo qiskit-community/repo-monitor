@@ -13,6 +13,8 @@ jobs:
   generate_issue_report:
     runs-on: ubuntu-latest
     steps:
+      - name: Check vars
+        run: printenv | sed 's;=.*;;' | sort
       - uses: actions/checkout@v2
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
