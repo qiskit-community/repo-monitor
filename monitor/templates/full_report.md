@@ -1,4 +1,4 @@
-# Issues report
+# Issues report | {{date}}
 
 {% for repo, report in repos %}
 {{report}}

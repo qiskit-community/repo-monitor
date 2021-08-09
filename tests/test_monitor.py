@@ -36,7 +36,7 @@ class TestMonitor(unittest.TestCase):
                                status=200)
 
         open_issues = self.monitor.get_open_issues(self.account, self.repo, max_pages=2)
-        self.assertEqual(len(open_issues), 22)
+        self.assertEqual(len(open_issues), 200)
         self.assertTrue(all(isinstance(i, IssueMeta) for i in open_issues))
         for issue in open_issues:
             self.assertEqual(len(issue.comments), 6)
