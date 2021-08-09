@@ -2,6 +2,8 @@ name: Issues report generation
 
 on:
   push:
+  schedule:
+    - cron:  '5 8 * * 2' # each Tuesday at 8 05
   workflow_dispatch:
     inputs:
       repo:
@@ -23,8 +25,6 @@ jobs:
           python-version: '3.9'
       - name: Checkout base code
         uses: actions/checkout@v2
-#        with:
-#          path: base-code
       - name: Checkout wiki code
         uses: actions/checkout@v2
         with:
@@ -45,4 +45,4 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add .
-          git diff-index --quiet HEAD || git commit -m "Add changes" && git push
+          git diff-index --quiet HEAD || git commit -m "Issue report for ${{ steps.date.outputs.date }}" && git push
