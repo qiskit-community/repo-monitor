@@ -112,6 +112,6 @@ class Monitor:
         """Generate report and save it to specified folder."""
         folder = folder if folder is not None else "reports"
         rendered_report = self.render_report(repos_urls=repos_urls)
-        report_name = "issues-report-{}.md".format(datetime.now().strftime("%m-%d-%Y"))
+        report_name = "Report-{}.md".format(datetime.now().strftime("%m-%d-%Y"))
         with open("./{}/{}".format(folder, report_name), "w") as file:
             file.write(rendered_report)
