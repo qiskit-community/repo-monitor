@@ -38,7 +38,7 @@
 ## About The Project
 
 Repository for automation of Qiskit issues and prs monitoring.
-
+All reports generated are stored in [project wiki](https://github.com/qiskit-community/repo-monitor/wiki).
 
 <!-- USAGE EXAMPLES -->
 ## Usage
