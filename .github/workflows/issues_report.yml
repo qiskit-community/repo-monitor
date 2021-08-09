@@ -1,7 +1,6 @@
 name: Issues report generation
 
 on:
-  push:
   schedule:
     - cron:  '5 8 * * 2' # each Tuesday at 8 05
   workflow_dispatch:
