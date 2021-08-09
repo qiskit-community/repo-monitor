@@ -9,7 +9,7 @@ on:
       repo:
         description: 'Full url to repository.'
         required: false
-        default: https://github.com/Qiskit/qiskit-finance
+        default: https://github.com/Qiskit/qiskit-terra
 
 jobs:
   generate_issue_report:
@@ -38,7 +38,7 @@ jobs:
           pip install -r requirements-dev.txt
       - name: Generate report
         run: |
-          python manager.py generate_reports_to_folder '["https://github.com/Qiskit/qiskit-finance"]'
+          python manager.py generate_reports_to_folder '["https://github.com/Qiskit/qiskit-terra","https://github.com/Qiskit/qiskit-tutorials"]'
       - name: Push to wiki
         run: |
           cd reports
