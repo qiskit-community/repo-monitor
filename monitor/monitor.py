@@ -3,6 +3,7 @@ Purpose of this class is to ba an adapter to command line commands
 and execute specifics scripts for monitoring needs.
 """
 import json
+import os
 from datetime import datetime
 from typing import Optional, List
 
@@ -14,6 +15,17 @@ from monitor.utils import UrlsHelper, GitHubUrlsHelper
 
 
 # pylint: disable=too-few-public-methods
+def save_open_issues_to_json(repo_meta: RepoMeta,
+                             folder: Optional[str] = None):
+    """Saves open issues to json."""
+    folder = folder or "./resources"
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    file_name = f'{repo_meta.name}_{datetime.now().strftime("%m-%d-%Y-%H-%M")}.json'
+    with open(f"{folder}/{file_name}", "w") as file:
+        json.dump([i.to_dict() for i in repo_meta.issues], file)
+
+
 class Monitor:
     """Monitor class."""
 
@@ -99,10 +111,12 @@ class Monitor:
         for url in repos_urls:
             parts = url.split("/")
             account, name = parts[-2], parts[-1]
-            repos.append(RepoMeta(account=account,
-                                  name=name,
-                                  issues=self.get_open_issues(account=account,
-                                                              repo=name)))
+            repo = RepoMeta(account=account,
+                            name=name,
+                            issues=self.get_open_issues(account=account,
+                                                        repo=name))
+            save_open_issues_to_json(repo)
+            repos.append(repo)
 
         report = FullReport(repos)
         return report.render_report()
@@ -110,7 +124,9 @@ class Monitor:
     def generate_reports_to_folder(self, repos_urls: [List[str]],
                                    folder: Optional[str] = None):
         """Generate report and save it to specified folder."""
-        folder = folder if folder is not None else "reports"
+        folder = folder if folder is not None else "reports/reports/issues"
+        if not os.path.exists(folder):
+            os.makedirs(folder)
         rendered_report = self.render_report(repos_urls=repos_urls)
         report_name = "Report-{}.md".format(datetime.now().strftime("%m-%d-%Y"))
         with open("./{}/{}".format(folder, report_name), "w") as file:
