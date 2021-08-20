@@ -15,6 +15,17 @@ from monitor.utils import UrlsHelper, GitHubUrlsHelper
 
 
 # pylint: disable=too-few-public-methods
+def save_open_issues_to_json(repo_meta: RepoMeta,
+                             folder: Optional[str] = None):
+    """Saves open issues to json."""
+    folder = folder or "./resources"
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    file_name = f'{repo_meta.name}_{datetime.now().strftime("%m-%d-%Y-%H-%M")}.json'
+    with open(f"{folder}/{file_name}", "w") as file:
+        json.dump([i.to_dict() for i in repo_meta.issues], file)
+
+
 class Monitor:
     """Monitor class."""
 
@@ -104,21 +115,11 @@ class Monitor:
                             name=name,
                             issues=self.get_open_issues(account=account,
                                                         repo=name))
-            self.save_open_issues_to_json(repo)
+            save_open_issues_to_json(repo)
             repos.append(repo)
 
         report = FullReport(repos)
         return report.render_report()
-
-    def save_open_issues_to_json(self, repo_meta: RepoMeta,
-                                 folder: Optional[str] = None):
-        """Saves open issues to json."""
-        folder = folder or "./resources"
-        if not os.path.exists(folder):
-            os.makedirs(folder)
-        file_name = f'{repo_meta.name}_{datetime.now().strftime("%m-%d-%Y-%H-%M")}.json'
-        with open(f"{folder}/{file_name}", "w") as file:
-            json.dump([i.to_dict() for i in repo_meta.issues], file)
 
     def generate_reports_to_folder(self, repos_urls: [List[str]],
                                    folder: Optional[str] = None):
