@@ -1,4 +1,5 @@
 """Issue meta class."""
+import inspect
 from datetime import datetime
 from typing import List, Optional, Union
 
@@ -155,6 +156,20 @@ class IssueMeta:
             return sorted(self.comments,
                           key=lambda c: -c.created_at.timestamp())[0].author_association
         return GitHubAuthorAssociations.NONE
+
+    def to_dict(self):
+        """Converts to dict."""
+        skip_fields = ["comments", "created_at", "updated_at"]
+
+        result = dict()
+        for name, value in inspect.getmembers(self):
+            if name in skip_fields:
+                continue
+            if not name.startswith('_') and \
+                    not inspect.ismethod(value) and not inspect.isfunction(value) and \
+                    hasattr(self, name):
+                result[name] = value
+        return result
 
     def __eq__(self, other: 'IssueMeta'):
         return self.title == self.title and self.user == self.user

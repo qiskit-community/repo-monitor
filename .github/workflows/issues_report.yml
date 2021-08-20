@@ -17,7 +17,7 @@ jobs:
 
       - name: Get current date
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+        run: echo "::set-output name=date::$(date +'%m-%d-%Y:%H:%M')"
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
@@ -45,3 +45,15 @@ jobs:
           git config --local user.name "GitHub Action"
           git add .
           git diff-index --quiet HEAD || git commit -m "Issue report for ${{ steps.date.outputs.date }}" && git push
+      - name: Remove reports folder
+        run: rm -r reports
+      - name: Commit saved issues metadata and create Pull Request
+        if: ${{ success() }}
+        id: cpr
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: Generated report metadata ${{ steps.date.outputs.date }}.
+          title: Generated report metadata ${{ steps.date.outputs.date }}.
+          body: Generated report metadata ${{ steps.date.outputs.date }}.
+          branch: auto-report-metadata-${{ steps.date.outputs.date }}
+          base: main
