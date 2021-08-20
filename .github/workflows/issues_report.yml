@@ -1,14 +1,10 @@
 name: Issues report generation
 
 on:
+  push:
   schedule:
     - cron:  '5 8 * * 2' # each Tuesday at 8 05
   workflow_dispatch:
-    inputs:
-      repo:
-        description: 'Full url to repository.'
-        required: false
-        default: https://github.com/Qiskit/qiskit-terra
 
 jobs:
   generate_issue_report:
