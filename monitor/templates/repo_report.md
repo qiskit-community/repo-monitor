@@ -7,7 +7,7 @@
 |---|---|---|---|---|---|---|---|---|
 {% for issue in report.issues_with_community_association -%}
 {% set issue_url = "https://github.com/{}/{}/issues/{}".format(report.repo.account, report.repo.name, issue.number) -%}
-| [{{issue.number}}]({{issue_url}}) | {{issue.title}} |  {{ issue.days_since_last_update }} | {{ issue.days_since_last_member_comment }} | {{issue.last_commented_by}} | {{ issue.created_at.strftime('%Y-%m-%d') }} | {{issue.user}}  | {{issue.pull_request}} | {{issue.assignee}} |
+| [{{issue_url}}]({{issue_url}}) | {{issue.title}} |  {{ issue.days_since_last_update }} | {{ issue.days_since_last_member_comment }} | {{issue.last_commented_by}} | {{ issue.created_at.strftime('%Y-%m-%d') }} | {{issue.user}}  | {{issue.pull_request}} | {{issue.assignee}} |
 {% endfor %}
 
 </details>
@@ -19,7 +19,7 @@
 |---|---|---|---|---|---|---|---|---|
 {% for issue in report.open_issues_sorted_by_update_date -%}
 {% set issue_url = "https://github.com/{}/{}/issues/{}".format(report.repo.account, report.repo.name, issue.number) -%}
-| [{{issue.number}}]({{issue_url}}) | {{issue.title}} |  {{ issue.days_since_last_update }} | {{ issue.days_since_last_member_comment }} | {{issue.last_commented_by}} | {{ issue.created_at.strftime('%Y-%m-%d') }} | {{issue.user}}  | {{issue.pull_request}} | {{issue.assignee}} |
+| [{{issue_url}}]({{issue_url}}) | {{issue.title}} |  {{ issue.days_since_last_update }} | {{ issue.days_since_last_member_comment }} | {{issue.last_commented_by}} | {{ issue.created_at.strftime('%Y-%m-%d') }} | {{issue.user}}  | {{issue.pull_request}} | {{issue.assignee}} |
 {% endfor %}
 
 </details>
