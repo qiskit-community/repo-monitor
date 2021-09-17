@@ -128,6 +128,6 @@ class Monitor:
         if not os.path.exists(folder):
             os.makedirs(folder)
         rendered_report = self.render_report(repos_urls=repos_urls)
-        report_name = "Report-{}.md".format(datetime.now().strftime("%m-%d-%Y"))
+        report_name = "Report-{}.md".format(datetime.now().strftime("%m-%d-%Y_%H_%M"))
         with open("./{}/{}".format(folder, report_name), "w") as file:
             file.write(rendered_report)
